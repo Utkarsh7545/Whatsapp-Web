@@ -13,14 +13,42 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Use environment variable for socket connection
+    const SOCKET_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+    
+    console.log('🔌 Connecting to Socket.IO server:', SOCKET_URL);
+    
     // Initialize socket connection
-    const newSocket = io('http://localhost:8000');
+    const newSocket = io(SOCKET_URL, {
+      withCredentials: true,
+      transports: ['websocket', 'polling'],
+      autoConnect: true,
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionAttempts: 5,
+      timeout: 20000,
+    });
+
+    // Socket connection event handlers
+    newSocket.on('connect', () => {
+      console.log('✅ Socket.IO connected:', newSocket.id);
+    });
+
+    newSocket.on('disconnect', (reason) => {
+      console.log('❌ Socket.IO disconnected:', reason);
+    });
+
+    newSocket.on('connect_error', (error) => {
+      console.error('🔌 Socket.IO connection error:', error);
+    });
+
     setSocket(newSocket);
 
     // Load initial conversations
     loadConversations();
 
     return () => {
+      console.log('🔌 Closing socket connection');
       newSocket.close();
     };
   }, []);
@@ -105,6 +133,7 @@ const App: React.FC = () => {
       
       // Join the conversation room for real-time updates
       if (socket) {
+        console.log('🏠 Joining conversation room:', phoneNumber);
         socket.emit('join-conversation', phoneNumber);
       }
     } catch (error) {
