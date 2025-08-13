@@ -30,7 +30,7 @@ A full-stack WhatsApp Web clone that processes webhook payloads and displays rea
 
 ## 🚀 Live Demo
 
-🌐 **[View Live Application](YOUR_DEPLOYMENT_URL_HERE)**
+🌐 **[View Live Application](https://whatsapp-web-frontend-8wh6.onrender.com)**
 
 ## 📋 Table of Contents
 
